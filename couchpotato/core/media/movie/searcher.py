@@ -54,7 +54,10 @@ class MovieSearcher(SearcherBase, MovieTypeBase):
         })
 
         if self.conf('run_on_launch'):
-            addEvent('app.load', self.searchAll)
+            def on_load():
+                time.sleep(.1)
+                self.searchAll()
+            addEvent('app.load', on_load, priority = 1000)
 
     def searchAllView(self, **kwargs):
 
@@ -145,9 +148,10 @@ class MovieSearcher(SearcherBase, MovieTypeBase):
         index = 0
         for q_identifier in profile.get('qualities'):
             quality_custom = {
+                'index': index,
                 'quality': q_identifier,
                 'finish': profile['finish'][index],
-                'wait_for': profile['wait_for'][index],
+                'wait_for': tryInt(profile['wait_for'][index]),
                 '3d': profile['3d'][index] if profile.get('3d') else False
             }
 
