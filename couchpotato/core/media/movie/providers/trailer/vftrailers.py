@@ -53,6 +53,20 @@ class vftrailers(VFTrailerProvider):
             return True
         else:
             return False
+        
+    def controltitle2(self,title,moviename):
+        realtitle=self.cleantitle(moviename[:-5].decode('unicode-escape'))
+        year=moviename[len(moviename)-4:]
+        wordsleft=[]
+        cleantitles=self.cleantitle(title)
+        for word in realtitle.split():
+            if word not in cleantitles.split():
+                wordsleft.append(word)
+        self.logg(title+' \\\\mots non trouves//// '+str(wordsleft),True)
+        if len(wordsleft)==0:
+            return True
+        else:
+            return False
     def cleandic(self,dict,moviename):
         series=['2','3','4','5','6','7','8']
         titlenames=dict.keys()
@@ -63,6 +77,9 @@ class vftrailers(VFTrailerProvider):
         for titledict in titlenames:
             testcontinue=self.controltitle(titledict,moviename)
             if testcontinue==False:
+                continue
+            testcontinue2=self.controltitle2(titledict,moviename)
+            if testcontinue2==False:
                 continue
             cleandict=self.cleantitle(titledict)
             if not '3d' in cleandict and ('vf' in cleandict or 'francais' in cleandict or ' fr ' in cleandict) and not ' vo ' in cleandict :
@@ -110,7 +127,7 @@ class vftrailers(VFTrailerProvider):
         return urllistvf,urllistvostfr,urllistvo
            
     def googlesearch(self,searchstringori):
-        uploadtoignore=['UniversalMoviesFR']
+        uploadtoignore=['UniversalMoviesFR','ParamountmoviesFR']
         time.sleep(30)
         searchstring=searchstringori[:-5].replace(' ','+')
         urldic={}
@@ -178,9 +195,6 @@ class vftrailers(VFTrailerProvider):
                 if self.cleantitle(moviename[:-5].decode('unicode-escape')) in ficheresulttitle and countseries==0 and int(moviename[len(moviename)-4:])+2>yearresult and int(moviename[len(moviename)-4:])-2<yearresult:
                     goodresult=result
                     break
-            self.logg("Resultat : Nombre [{0}] Code [{1}] Titre original [{2}]".format(search['feed']['totalResults'],
-                                                                        goodresult['code'],
-                                                                        goodresult['originalTitle'].encode("latin-1")))
             self.logg('Recherche de la fiche du film avec le code : ' + str(goodresult['code']))
             movieallo = ficheresult
             for x in movieallo['movie']['link']:
