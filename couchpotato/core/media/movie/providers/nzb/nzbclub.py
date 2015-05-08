@@ -18,7 +18,6 @@ class NZBClub(MovieProvider, Base):
         })
 
         query = tryUrlencode({
-            'ig': 1,
             'rpp': 200,
             'st': 5,
             'sp': 1,
